@@ -1,10 +1,12 @@
 import type { Actions, PageServerLoad } from "./$types"
-import { prisma } from "$lib/server/prisma";
 import { fail } from "@sveltejs/kit";
+import { db } from "$lib/server/drizzle/db";
+import { Account } from "$lib/server/drizzle/schema";
+import { eq } from "drizzle-orm";
 
 export const load: PageServerLoad = async () => {
     return {
-        accounts: await prisma.account.findMany()
+        accounts: await db.select().from(Account)
     }
 };
 
@@ -17,11 +19,9 @@ export const actions: Actions = {
             if (!user) {
                 user = "[Senza nome]";
             }
-            await prisma.account.create({
-                data: {
-                    user,
-                    money: Number(money)
-                }
+            await db.insert(Account).values({ 
+                user, 
+                money: Number(money) 
             })
         } catch (err) {
             console.error(err)
@@ -41,49 +41,24 @@ export const actions: Actions = {
         }
 
         if (!money) {
-            const account = await prisma.account.findUnique({
-                where: {
-                    id: Number(id)
-                }
-            })
+            const account = await db.select({ money: Account.money }).from(Account).where(eq(Account.id, Number(id)))
 
-            money = account?.money ?? 0;
+            money = account[0].money ?? 0;
         }
 
         try {
             if (mode === 'add') {
                 const qty = Number(money) + Number(initialQty)
 
-                await prisma.account.update({
-                    where: {
-                        id: Number(id)
-                    },
-                    data: {
-                        money: Number(qty)
-                    }
-                })
+                await db.update(Account).set({ money: Number(qty) }).where(eq(Account.id, Number(id)))
             } else if (mode === 'remove') {
                 const qty = Number(money) - Number(initialQty)
 
-                await prisma.account.update({
-                    where: {
-                        id: Number(id)
-                    },
-                    data: {
-                        money: Number(qty)
-                    }
-                })
+                await db.update(Account).set({ money: Number(qty) }).where(eq(Account.id, Number(id)))
             } else if (mode === 'set') {
                 const qty = Number(initialQty)
 
-                await prisma.account.update({
-                    where: {
-                        id: Number(id)
-                    },
-                    data: {
-                        money: Number(qty)
-                    }
-                })
+                await db.update(Account).set({ money: Number(qty) }).where(eq(Account.id, Number(id)))
             } else {
                 return fail(400, { error: 'Invalid request' });
             }
@@ -102,11 +77,7 @@ export const actions: Actions = {
         }
 
         try {
-            await prisma.account.delete({
-                where: {
-                    id: Number(id)
-                }
-            })
+            await db.delete(Account).where(eq(Account.id, Number(id)))
         } catch (err) {
             console.error(err)
             return fail(500, { error: 'Could not delete user.' })
@@ -114,24 +85,26 @@ export const actions: Actions = {
         return { status: 200 }
     },
 
-    searchUser: async ({ url }) => {
-        const id = url.searchParams.get('id');
-        if (!id) {
-            return fail(400, { error: 'Invalid request' });
-        }
+    // WIP
 
-        try {
-            const accounts = await prisma.account.findMany({
-                where: {
-                    id: Number(id)
-                }
-            })
-            console.log([accounts])
-            return { accounts }
+    // searchUser: async ({ url }) => {
+    //     const id = url.searchParams.get('id');
+    //     if (!id) {
+    //         return fail(400, { error: 'Invalid request' });
+    //     }
+
+    //     try {
+    //         const accounts = await prisma.account.findMany({
+    //             where: {
+    //                 id: Number(id)
+    //             }
+    //         })
+    //         console.log([accounts])
+    //         return { accounts }
             
-        } catch (err) {
-            console.error(err)
-            return fail(500, { error: 'Could not search user.' })
-        }
-    }
+    //     } catch (err) {
+    //         console.error(err)
+    //         return fail(500, { error: 'Could not search user.' })
+    //     }
+    // }
 };

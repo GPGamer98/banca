@@ -4,6 +4,8 @@
 	"private": true,
 	"scripts": {
 		"dev": "vite dev",
+		"db:generate": "drizzle-kit generate:pg",
+		"db:migrate": "tsx drizzle/migrate.ts",
 		"build": "vite build",
 		"preview": "vite preview",
 		"test": "playwright test",
@@ -23,6 +25,7 @@
 		"@types/node": "^20.12.8",
 		"@typescript-eslint/eslint-plugin": "^7.0.0",
 		"@typescript-eslint/parser": "^7.0.0",
+		"drizzle-kit": "^0.20.4",
 		"eslint": "^8.56.0",
 		"eslint-config-prettier": "^9.1.0",
 		"eslint-plugin-svelte": "^2.35.1",
@@ -32,12 +35,14 @@
 		"svelte": "^4.2.7",
 		"svelte-check": "^3.6.0",
 		"tslib": "^2.4.1",
+		"tsx": "^4.9.3",
 		"typescript": "^5.0.0",
 		"vite": "^5.2.11"
 	},
 	"type": "module",
 	"dependencies": {
 		"@prisma/client": "^5.13.0",
+		"drizzle-orm": "^0.29.5",
 		"vercel": "^34.1.8"
 	}
 }
