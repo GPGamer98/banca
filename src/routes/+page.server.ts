@@ -4,7 +4,7 @@ import { fail } from "@sveltejs/kit";
 
 export const load: PageServerLoad = async () => {
     return {
-        accounts: await prisma.account.findMany()
+        accounts: await global.prisma.account.findMany()
     }
 };
 
@@ -17,7 +17,7 @@ export const actions: Actions = {
             if (!user) {
                 user = "[Senza nome]";
             }
-            await prisma.account.create({
+            await global.prisma.account.create({
                 data: {
                     user,
                     money: Number(money)
@@ -41,7 +41,7 @@ export const actions: Actions = {
         }
 
         if (!money) {
-            const account = await prisma.account.findUnique({
+            const account = await global.prisma.account.findUnique({
                 where: {
                     id: Number(id)
                 }
@@ -54,7 +54,7 @@ export const actions: Actions = {
             if (mode === 'add') {
                 const qty = Number(money) + Number(initialQty)
 
-                await prisma.account.update({
+                await global.prisma.account.update({
                     where: {
                         id: Number(id)
                     },
@@ -65,7 +65,7 @@ export const actions: Actions = {
             } else if (mode === 'remove') {
                 const qty = Number(money) - Number(initialQty)
 
-                await prisma.account.update({
+                await global.prisma.account.update({
                     where: {
                         id: Number(id)
                     },
@@ -76,7 +76,7 @@ export const actions: Actions = {
             } else if (mode === 'set') {
                 const qty = Number(initialQty)
 
-                await prisma.account.update({
+                await global.prisma.account.update({
                     where: {
                         id: Number(id)
                     },
@@ -102,7 +102,7 @@ export const actions: Actions = {
         }
 
         try {
-            await prisma.account.delete({
+            await global.prisma.account.delete({
                 where: {
                     id: Number(id)
                 }
@@ -121,7 +121,7 @@ export const actions: Actions = {
         }
 
         try {
-            const accounts = await prisma.account.findMany({
+            const accounts = await global.prisma.account.findMany({
                 where: {
                     id: Number(id)
                 }
