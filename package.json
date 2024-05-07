@@ -43,6 +43,7 @@
 	"dependencies": {
 		"@prisma/client": "^5.13.0",
 		"drizzle-orm": "^0.29.5",
+		"postgres": "3.4.4",
 		"vercel": "^34.1.8"
 	}
 }
