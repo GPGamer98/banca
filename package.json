@@ -43,7 +43,7 @@
 		"@prisma/client": "^5.13.0",
 		"@types/better-sqlite3": "^7.6.10",
 		"drizzle-orm": "^0.29.5",
-		"postgres": "3.4.4",
+		"better-sqlite3": "9.6.0",
 		"vercel": "^34.1.8"
 	}
 }
