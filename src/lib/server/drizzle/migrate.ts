@@ -1,14 +1,13 @@
-import "dotenv/config";
-import { drizzle } from 'drizzle-orm/postgres-js';
-import { migrate } from 'drizzle-orm/postgres-js/migrator';
-import postgres from 'postgres';
+import { drizzle } from 'drizzle-orm/better-sqlite3';
+import { migrate } from 'drizzle-orm/better-sqlite3/migrator';
+import Database from 'better-sqlite3';
 
-const migrationClient = postgres(process.env.DATABASE_URL as string, { max: 1 });
+const sqlite = new Database('sqlite.db');
 
 async function main() {
-    await migrate(drizzle(migrationClient), { migrationsFolder: './drizzle/migrations' });
+    await migrate(drizzle(sqlite), { migrationsFolder: 'src/lib/server/drizzle/migrations' });
 
-    await migrationClient.end();
+    sqlite.close();
 };
 
 main()
