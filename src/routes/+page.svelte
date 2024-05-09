@@ -10,18 +10,24 @@
     let money: number
     let mode: string
     let qty: number
+
+    let cardView = true
 </script>
 
 <div class="container">
 	<div class="funcs">
         <div class="users">
-                <h2 class="title list">Users</h2>
+                <div class="top">
+                    <h2 class="title list">Users</h2>
+                    <label for="" class="view">View mode: <button class="view-btn" on:click={() => cardView = !cardView}>{cardView ? 'Cards' : 'List'}</button></label>
+                </div>
                 <div class="user-list">
                     
                     {#if accounts.length !== 0}
-                            {#each accounts as account}
-                                <div class="user">
-                                    <p>Nome: {account.user} - Soldi: {account.money}</p>
+                            {#if cardView}
+                                {#each accounts as account}
+                                    <div class="user">
+                                        <p>Nome: {account.user} - Soldi: {account.money}</p>
                                     
                                         <div class="actions">
                                             <div class="forms">
@@ -35,15 +41,22 @@
                                             <p class="id">ID: {account.id}</p>
                                         </div>
                                     </div>
-                            {/each}
+                                {/each}
+                            {:else}
+                                <ul>
+                                    {#each accounts as account}
+                                            <li>Nome: {account.user} - Soldi: {account.money}</li>
+                                    {/each}
+                                </ul>
+                            {/if}
                     {:else}
                         <div class="no-user">
                             <p>Nessun utente presente</p>
                         </div>
                     {/if}
-                    
                 </div>
             </div>
+        </div>
         <div class="user-funcs">
             <form action="?/createUser" method="POST" class="new-user">
                 <h2 class="title new">New User</h2>
@@ -82,7 +95,6 @@
                 </div>
             </form>
         </div>
-    </div>
 </div>
 
 <style>
@@ -107,6 +119,26 @@
 
     .funcs > * {
         margin: 8px;
+    }
+
+    .top {
+        display: flex;
+        justify-content: space-between;
+    }
+
+    .user-list {
+        width: 55vw;
+    }
+
+    .view {
+        margin: 0;
+    }
+
+    .view-btn {
+        border: 1px solid;
+        border-radius: 10px;
+        width: 3.6rem;
+        margin-left: 0.5rem;
     }
 
     .user {
